@@ -113,7 +113,7 @@ class brqsms extends \WP_SMS\Gateway
             return new \WP_Error('account-credit', __('Password does not set for this gateway', 'wp-sms'));
         }
 
-        $response = wp_remote_get($this->wsdl_link . "?action=account-credit&api_key={$this->password}");
+        $response = wp_remote_get($this->wsdl_link . "?action=account-credit&response=json&api_key={$this->password}");
 
         // Check gateway credit
         if (is_wp_error($response)) {
