@@ -617,6 +617,7 @@ class Gateway
                 'infodomain'   => 'infodomain.asia',
                 'mobiledotnet' => 'mobile.net.sa',
                 'zain'         => 'zain.im',
+                'brqsms'         => 'brqsms.com',
                 'malath'       => 'malath.net.sa',
                 'safasms'      => 'safa-sms.com',
             ),
