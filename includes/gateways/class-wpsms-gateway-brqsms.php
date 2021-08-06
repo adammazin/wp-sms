@@ -16,7 +16,7 @@ class brqsms extends \WP_SMS\Gateway
         parent::__construct();
         $this->has_key        = false;
         $this->validateNumber = "Example: Phone = 249123325566";
-        $this->help           = "Use Sender Number as Sender Name";
+	$this->help           = "Put Sender ID on (Username and Sender Number) field";
     }
 
     public function SendSMS()
@@ -113,7 +113,7 @@ class brqsms extends \WP_SMS\Gateway
             return new \WP_Error('account-credit', __('Password does not set for this gateway', 'wp-sms'));
         }
 
-        $response = wp_remote_get($this->wsdl_link . "?action=account-credit&response=json&api_key={$this->password}");
+        $response = wp_remote_get($this->wsdl_link . "?action=check-balance&api_key={$this->password}");
 
         // Check gateway credit
         if (is_wp_error($response)) {
@@ -126,7 +126,7 @@ class brqsms extends \WP_SMS\Gateway
             if (isset($result) and $result <= 0) {
                 return new \WP_Error('account-credit', $this->get_error_message_balance($result));
             } else {
-                return $result;
+                return $result['balance'];
             }
         } else {
             return new \WP_Error('account-credit', $response['body']);
@@ -141,11 +141,11 @@ class brqsms extends \WP_SMS\Gateway
     private function get_error_message_balance($error_code)
     {
         switch ($error_code) {
-            case '-100':
+            case '-101':
                 return 'Missing parameters (not exist or empty)<br>password';
                 break;
 
-            case '-110':
+            case '-102':
                 return 'Account not exist (wrong password)';
                 break;
 
