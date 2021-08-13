@@ -60,12 +60,17 @@ class brqsms extends \WP_SMS\Gateway
             return $credit;
         }
 
+	$unicode = 0;
+        if (isset($this->options['send_unicode']) and $this->options['send_unicode']) {
+            $unicode = 1;
+        }    
+	    
         $to   = implode($this->to, ",");
         $to   = urlencode($to);
         $text = urlencode($this->msg);
         $from = urlencode($this->from);
 
-        $response = wp_remote_get($this->wsdl_link . "?action=send-sms&api_key=" . $this->password . "&to=" . $to . "&sms=" . $text . "&from=" . $from);
+        $response = wp_remote_get($this->wsdl_link . "?action=send-sms&api_key=" . $this->password . "&to=" . $to . "&sms=" . $text . "&from=" . $from . "&unicode=" . $unicode);
 
         // Check gateway credit
         if (is_wp_error($response)) {
