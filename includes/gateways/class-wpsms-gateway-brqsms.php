@@ -14,9 +14,11 @@ class brqsms extends \WP_SMS\Gateway
     public function __construct()
     {
         parent::__construct();
-        $this->has_key        = false;
+        $this->has_key        = true;
         $this->validateNumber = "Example: Phone = 249123325566";
-	$this->help           = "Put Sender ID on (Username and Sender Number) field";
+		$this->help           = "Put Sender ID on Sender Number field";
+		$this->username = false;
+	    	$this->password = false;
     }
 
     public function SendSMS()
@@ -59,8 +61,7 @@ class brqsms extends \WP_SMS\Gateway
 
             return $credit;
         }
-
-	$unicode = 0;
+		$unicode = 0;
         if (isset($this->options['send_unicode']) and $this->options['send_unicode']) {
             $unicode = 1;
         }    
@@ -70,7 +71,7 @@ class brqsms extends \WP_SMS\Gateway
         $text = urlencode($this->msg);
         $from = urlencode($this->from);
 
-        $response = wp_remote_get($this->wsdl_link . "?action=send-sms&api_key=" . $this->password . "&to=" . $to . "&sms=" . $text . "&from=" . $from . "&unicode=" . $unicode);
+        $response = wp_remote_get($this->wsdl_link . "?action=send-sms&api_key=" . $this->has_key . "&to=" . $to . "&sms=" . $text . "&from=" . $from . "&unicode=" . $unicode);
 
         // Check gateway credit
         if (is_wp_error($response)) {
@@ -114,11 +115,11 @@ class brqsms extends \WP_SMS\Gateway
     public function GetCredit()
     {
         // Check api key
-        if (!$this->password) {
-            return new \WP_Error('account-credit', __('Password does not set for this gateway', 'wp-sms'));
+        if (!$this->has_key) {
+            return new \WP_Error('account-credit', __('API Key does not set for this gateway', 'wp-sms'));
         }
 
-        $response = wp_remote_get($this->wsdl_link . "?action=check-balance&api_key={$this->password}");
+        $response = wp_remote_get($this->wsdl_link . "?action=check-balance&api_key={$this->has_key}");
 
         // Check gateway credit
         if (is_wp_error($response)) {
@@ -147,11 +148,11 @@ class brqsms extends \WP_SMS\Gateway
     {
         switch ($error_code) {
             case '-101':
-                return 'Missing parameters (not exist or empty)<br>password';
+                return 'Missing parameters (not exist or empty)<br>API Key';
                 break;
 
             case '-102':
-                return 'Account not exist (wrong password)';
+                return 'Account not exist (wrong API Key)';
                 break;
 
             default:
